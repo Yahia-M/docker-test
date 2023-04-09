@@ -1,0 +1,16 @@
+tasks:
+  - name: Install dependencies
+    command: |
+      sudo su
+      cd
+      wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+      sudo apt-get install apt-transport-https -y
+      echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+      sudo apt-get install apt-transport-https -y
+      sed -i 's/#network.host: 192.168.0.1/network.host: 127.0.0.1/g' /etc/elasticsearch/elasticsearch.yml
+      sed -i 's/#http.port: 9200/http.port: 9200/g' /etc/elasticsearch/elasticsearch.yml
+      sed -i 's/xpack.security.enabled: true/xpack.security.enabled: false/g' /etc/elasticsearch/elasticsearch.yml
+  - name: Start service
+    command: |
+      sudo systemctl enable elasticsearch
+      sudo systemctl start elasticsearch
